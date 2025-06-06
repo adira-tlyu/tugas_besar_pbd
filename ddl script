@@ -1,0 +1,93 @@
+CREATE DATABASE goodsales;
+USE goodsales;
+CREATE TABLE brand (
+    id_brand INT PRIMARY KEY AUTO_INCREMENT,
+    nameBrand VARCHAR(100)
+);
+CREATE TABLE category (
+    id_category INT PRIMARY KEY AUTO_INCREMENT,
+    nameCategory VARCHAR(100)
+);
+CREATE TABLE product (
+    id_product INT PRIMARY KEY AUTO_INCREMENT,
+    id_brand INT,
+    id_category INT,
+    variant VARCHAR(100),
+    packSize VARCHAR(50),
+    nameProduct VARCHAR(100),
+    FOREIGN KEY (id_brand) REFERENCES brand(id_brand),
+    FOREIGN KEY (id_category) REFERENCES category(id_category)
+);
+CREATE TABLE outlet (
+    id_outlet INT PRIMARY KEY AUTO_INCREMENT,
+    nameOutlet VARCHAR(100),
+    location VARCHAR(100),
+    personInCharge VARCHAR(100)
+);
+CREATE TABLE sales (
+    id_sales INT PRIMARY KEY AUTO_INCREMENT,
+    id_product INT,
+    id_outlet INT,
+    nameSales VARCHAR(100),
+    fee DECIMAL(10, 2),
+    FOREIGN KEY (id_product) REFERENCES product(id_product),
+    FOREIGN KEY (id_outlet) REFERENCES outlet(id_outlet)
+);
+CREATE TABLE stock (
+    id_product INT,
+    id_outlet INT,
+    quantity INT,
+    FOREIGN KEY (id_product) REFERENCES product(id_product),
+    FOREIGN KEY (id_outlet) REFERENCES outlet(id_outlet)
+);
+CREATE TABLE promo (
+    id_promo INT PRIMARY KEY AUTO_INCREMENT,
+    expireDate DATE,
+    promoType VARCHAR(50)
+);
+CREATE TABLE subscriptionBased (
+    id_promo INT PRIMARY KEY AUTO_INCREMENT,
+    duration INT,
+    renewalFee DECIMAL(10, 2),
+    discountRate DECIMAL(5, 2),
+    FOREIGN KEY (id_promo) REFERENCES promo(id_promo)
+);
+CREATE TABLE timeBased (
+    id_promo INT PRIMARY KEY AUTO_INCREMENT,
+    startDate DATE,
+    endDate DATE,
+    discountRate DECIMAL(5, 2),
+    FOREIGN KEY (id_promo) REFERENCES promo(id_promo)
+);
+CREATE TABLE orders (
+    id_order INT PRIMARY KEY AUTO_INCREMENT,
+    id_sales INT,
+    orderDate DATE,
+    orderQuantity INT,
+    orderPrice DECIMAL(10, 2),
+    FOREIGN KEY (id_sales) REFERENCES sales(id_sales)
+);
+CREATE TABLE payment (
+    id_payment INT PRIMARY KEY AUTO_INCREMENT,
+    id_order INT,
+    id_promo INT,
+    paymentNominal DECIMAL(10, 2),
+    paymentDate DATE,
+    paymentMethod VARCHAR(50),
+    FOREIGN KEY (id_order) REFERENCES orders(id_order),
+    FOREIGN KEY (id_promo) REFERENCES promo(id_promo)
+);
+CREATE TABLE cash (
+    id_payment INT PRIMARY KEY AUTO_INCREMENT,
+    cashAmount DECIMAL(10, 2),
+    changeAmount DECIMAL(10, 2),
+    FOREIGN KEY (id_payment) REFERENCES payment(id_payment)
+);
+CREATE TABLE credit (
+    id_payment INT PRIMARY KEY AUTO_INCREMENT,
+    cardNumber VARCHAR(30),
+    cardHolderName VARCHAR(100),
+    expiryDate DATE,
+    bankName VARCHAR(100),
+    FOREIGN KEY (id_payment) REFERENCES payment(id_payment)
+);
